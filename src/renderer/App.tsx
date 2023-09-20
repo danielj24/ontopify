@@ -45,7 +45,6 @@ function App(): JSX.Element {
     setPlaybackState(state as SpotifyPlaybackState)
   }
 
-  // eslint-disable-next-line
   useInterval(update, 1_000)
 
   useEffect(() => {

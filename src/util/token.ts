@@ -1,19 +1,19 @@
-import Store from 'electron-store'
 import { safeStorage } from 'electron'
 import { TokenType } from '@/type/token'
 import { SPOTIFY_CLIENT_ID } from '~/env'
 
-const store = new Store()
+const store = {} as Record<TokenType, Buffer>
 
 export function saveToken(type: TokenType, token: string): void {
   const encrypted = safeStorage.encryptString(token)
-  store.set(type, encrypted)
+
+  store[type] = encrypted
 }
 
 export function getToken(type: TokenType): string | null {
-  const encrypted = store.get(type) as string | undefined
+  const encrypted = store[type]
 
-  if (encrypted === undefined || encrypted === '') return null
+  if (!encrypted) return null
 
   return safeStorage.decryptString(Buffer.from(encrypted))
 }
@@ -22,7 +22,7 @@ export function deleteTokens(): void {
   const types = Object.values(TokenType)
 
   for (const type of types) {
-    store.delete(type)
+    delete store[type]
   }
 }
 

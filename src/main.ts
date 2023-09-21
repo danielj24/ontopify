@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
+import path from 'path'
 import { resolveWindow } from '@/main/directive/window'
 import { getToken, deleteTokens, refreshToken } from '@/util/token'
 import { TokenType } from './type/token'
@@ -31,3 +32,13 @@ app.on('activate', () => {
     resolveWindow().catch(console.error)
   }
 })
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('ontopify', process.execPath, [
+      path.resolve(process.argv[1]),
+    ])
+  }
+} else {
+  app.setAsDefaultProtocolClient('ontopify')
+}

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import crypto from 'crypto'
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, app } from 'electron'
 import { resolveWindow } from '@/main/directive/window'
 import { saveToken } from '@/util/token'
 import { TokenType } from '@/type/token'
@@ -13,6 +13,9 @@ const SCOPES = [
   'user-modify-playback-state',
 ]
 
+const CODE_VERIFIER = generateCodeVerifier()
+const CODE_CHALLENGE = generateCodeChallenge(CODE_VERIFIER)
+
 export default function AuthWindow() {
   const authWindow = new BrowserWindow({
     width: 400,
@@ -24,52 +27,66 @@ export default function AuthWindow() {
     },
   })
 
-  const codeVerifier = generateCodeVerifier()
-  const codeChallenge = generateCodeChallenge(codeVerifier)
-  const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${SPOTIFY_REDIRECT_URI}&code_challenge_method=S256&code_challenge=${codeChallenge}&scope=${encodeURIComponent(
+  const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${SPOTIFY_REDIRECT_URI}&code_challenge_method=S256&code_challenge=${CODE_CHALLENGE}&scope=${encodeURIComponent(
     SCOPES.join(' '),
   )}`
 
   authWindow.loadURL(authUrl)
   authWindow.show()
 
-  authWindow.webContents.on('did-navigate', async (_, url) => {
-    const parsedUrl = new URL(url)
+  authWindow.webContents.openDevTools()
+}
 
-    if (parsedUrl.origin === new URL(SPOTIFY_REDIRECT_URI).origin) {
-      const code = parsedUrl.searchParams.get('code')
+app.on('open-url', (_: unknown, url: string) => handleAuthCallback(url))
+app.on('second-instance', (_: unknown, commandLine: string[]) => {
+  // @TODO: Continue on Windows
+  const windows = BrowserWindow.getAllWindows()
 
-      if (code) {
-        try {
-          const response = await axios.post(
-            'https://accounts.spotify.com/api/token',
-            null,
-            {
-              params: {
-                client_id: SPOTIFY_CLIENT_ID,
-                grant_type: 'authorization_code',
-                code,
-                redirect_uri: SPOTIFY_REDIRECT_URI,
-                code_verifier: codeVerifier,
-              },
-            },
-          )
+  console.log(windows)
 
-          const { access_token, refresh_token } = response.data
+  // if (mainWindow) {
+  //   if (mainWindow.isMinimized()) mainWindow.restore()
+  //   mainWindow.focus()
+  // }
 
-          console.log('[auth window] refresh token')
-          console.log(refresh_token)
+  const url = commandLine.pop()
 
-          saveToken(TokenType.ACCESS, access_token)
-          saveToken(TokenType.REFRESH, refresh_token)
+  if (!url) return
 
-          authWindow.close()
-        } finally {
-          resolveWindow()
-        }
-      }
+  handleAuthCallback(url)
+})
+
+export async function handleAuthCallback(url: string) {
+  if (!url.startsWith(SPOTIFY_REDIRECT_URI)) return
+
+  const code = new URL(url).searchParams.get('code')
+
+  if (code) {
+    try {
+      const response = await axios.post(
+        'https://accounts.spotify.com/api/token',
+        null,
+        {
+          params: {
+            client_id: SPOTIFY_CLIENT_ID,
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: SPOTIFY_REDIRECT_URI,
+            code_verifier: CODE_VERIFIER,
+          },
+        },
+      )
+
+      const { access_token, refresh_token } = response.data
+
+      saveToken(TokenType.ACCESS, access_token)
+      saveToken(TokenType.REFRESH, refresh_token)
+
+      BrowserWindow.getAllWindows().forEach((window) => window.close())
+    } finally {
+      resolveWindow()
     }
-  })
+  }
 }
 
 function generateCodeVerifier() {

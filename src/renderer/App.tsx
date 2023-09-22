@@ -40,8 +40,6 @@ function App(): JSX.Element {
       tokenStore.setSpotifyToken(resp as string)
     }
 
-    console.log(state)
-
     setPlaybackState(state as SpotifyPlaybackState)
   }
 
@@ -60,7 +58,7 @@ function App(): JSX.Element {
     }
 
     getSetToken()
-  })
+  }, [])
 
   if (tokenStore.spotify === null) return <div>Loading...</div>
 

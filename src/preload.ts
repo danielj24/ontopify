@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI, ElectronAPI } from '@electron-toolkit/preload'
-import { TokenErrorResponse } from '@/type/TokenErrorResponse'
+import { TokenErrorResponse } from '@/type/token'
 
 interface Api {
   isDev: boolean

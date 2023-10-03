@@ -1,8 +1,8 @@
 export interface TokenErrorResponse {
-  error: string
+  error: string;
 }
 
 export enum TokenType {
-  ACCESS = 'access_token',
-  REFRESH = 'refresh_token',
+  ACCESS = "access_token",
+  REFRESH = "refresh_token",
 }

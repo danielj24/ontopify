@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "Spotify mini-player that stays on top.",
   "main": ".vite/build/main.js",
-  "prettier": "@jump24/prettier-config",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -28,7 +27,6 @@
     "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
     "@electron-forge/plugin-vite": "^6.4.2",
     "@jump24/eslint-config-react": "^1.2.1",
-    "@jump24/prettier-config": "^1.2.1",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -37,6 +35,7 @@
     "autoprefixer": "^10.4.15",
     "electron": "26.2.1",
     "eslint": "^8.0.1",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.25.0",
     "eslint-plugin-prettier": "^5.0.0",
     "postcss": "^8.4.30",

@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import { BASE_CONFIG, ALIAS } from './vite.const'
+import { defineConfig } from "vite";
+import { BASE_CONFIG, ALIAS } from "./vite.const";
 
 export default defineConfig({
   ...BASE_CONFIG,
@@ -8,4 +8,4 @@ export default defineConfig({
       ...ALIAS,
     },
   },
-})
+});

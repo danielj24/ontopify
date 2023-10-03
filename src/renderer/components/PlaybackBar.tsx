@@ -1,39 +1,34 @@
-import React from 'react'
-import { BackwardIcon, ForwardIcon } from '@heroicons/react/24/outline'
-import {
-  BoltIcon,
-  PlayCircleIcon,
-  PauseCircleIcon,
-  Bars4Icon,
-} from '@heroicons/react/24/solid'
-import { useTokenStore } from '@renderer/store/token'
-import { usePlaybackStore } from '@renderer/store/playback'
-import { play, pause, next, previous } from '@/api/playback'
+import React from "react";
+import { BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, PlayCircleIcon, PauseCircleIcon, Bars4Icon } from "@heroicons/react/24/solid";
+import { useTokenStore } from "@renderer/store/token";
+import { usePlaybackStore } from "@renderer/store/playback";
+import { play, pause, next, previous } from "@/api/playback";
 
 function PlaybackBar() {
-  const token = useTokenStore()
-  const playbackState = usePlaybackStore((s) => s.playbackState)
-  const setIsPlaying = usePlaybackStore((s) => s.setIsPlaying)
+  const token = useTokenStore();
+  const playbackState = usePlaybackStore((s) => s.playbackState);
+  const setIsPlaying = usePlaybackStore((s) => s.setIsPlaying);
 
   async function togglePlayback() {
-    if (playbackState == null) return
+    if (playbackState == null) return;
 
     if (playbackState.is_playing) {
-      await pause(token.spotify)
-      setIsPlaying(false)
-      return
+      await pause(token.spotify);
+      setIsPlaying(false);
+      return;
     }
 
-    await play(token.spotify)
-    setIsPlaying(true)
+    await play(token.spotify);
+    setIsPlaying(true);
   }
 
   async function handleNext() {
-    await next(token.spotify)
+    await next(token.spotify);
   }
 
   async function handlePrevious() {
-    await previous(token.spotify)
+    await previous(token.spotify);
   }
 
   return (
@@ -60,7 +55,7 @@ function PlaybackBar() {
       />
       <BoltIcon className="titlebar-button h-8 w-8 text-yellow-400 stroke-yellow-600 hover:animate-spin" />
     </div>
-  )
+  );
 }
 
-export default PlaybackBar
+export default PlaybackBar;

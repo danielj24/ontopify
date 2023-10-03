@@ -1,15 +1,15 @@
-import { fetchProfile } from '@/api/user'
-import { getToken } from '@/util/token'
-import { TokenType } from '@/type/token'
+import { fetchProfile } from "@/api/user";
+import { getToken } from "@/util/token";
+import { TokenType } from "@/type/token";
 
 export default async function checkAuth(): Promise<boolean> {
-  const spotifyKey = getToken(TokenType.ACCESS)
+  const spotifyKey = getToken(TokenType.ACCESS);
 
-  if (spotifyKey === null || spotifyKey === '') return false
+  if (spotifyKey === null || spotifyKey === "") return false;
 
-  const profileData = await fetchProfile(spotifyKey)
+  const profileData = await fetchProfile(spotifyKey);
 
-  if (profileData === undefined || profileData.error !== undefined) return false
+  if (profileData === undefined || profileData.error !== undefined) return false;
 
-  return true
+  return true;
 }

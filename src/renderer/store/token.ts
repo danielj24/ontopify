@@ -1,15 +1,15 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 enum Tokens {
-  SPOTIFY = 'spotify',
+  SPOTIFY = "spotify",
 }
 
 interface TokenStore {
-  [Tokens.SPOTIFY]: string
-  setSpotifyToken: (token: string) => void
+  [Tokens.SPOTIFY]: string;
+  setSpotifyToken: (token: string) => void;
 }
 
 export const useTokenStore = create<TokenStore>((set) => ({
-  spotify: '',
+  spotify: "",
   setSpotifyToken: (token: string) => set({ spotify: token }),
-}))
+}));

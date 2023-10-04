@@ -21,5 +21,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "eslint-plugin-prettier"],
+  rules: {
+    "prettier/prettier": "error",
+  },
 };

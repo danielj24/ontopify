@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useInterval } from "usehooks-ts";
-import { XCircleIcon } from "@heroicons/react/24/outline";
+import { XCircleIcon } from "lucide-react";
 import PlaybackBar from "@renderer/components/PlaybackBar";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
@@ -64,11 +64,11 @@ function App(): JSX.Element {
     <div className="h-full w-full bg-zinc-950 relative transition-all">
       <img src={albumImg} alt="" className="h-full w-full object-cover absolute top-0 blur-xl pointer-events-none" />
       <div className="absolute right-0 top-0 z-30 w-10 h-10 opacity-100" onClick={() => console.log("kill app")}>
-        <div className="h-24 w-24 bg-[radial-gradient(at_right_top,_black,#00000000,#00000000)] absolute top-0 right-0 pointer-events-none" />
+        <div className="h-24 w-24 bg-[radial-gradient(at_right_top,_black,#00000000,#00000000)] absolute -top-1 -right-1 pointer-events-none" />
         <XCircleIcon className="titlebar-button text-zinc-200 hover:text-white w-6 cursor-pointer z-10 absolute top-2 right-2" />
       </div>
       <div className="titlebar flex h-full justify-center relative tall:pb-24">
-        <div className="w-full h-full hidden tall:flex items-center justify-center p-4 pointer-events-none">
+        <div className="w-full h-full hidden tall:flex items-center justify-center p-4 pb-8 pointer-events-none">
           <img
             src={albumImg}
             alt=""
@@ -76,7 +76,9 @@ function App(): JSX.Element {
           />
         </div>
 
-        <div className="titlebar w-full flex flex-col justify-around items-center tall:absolute bottom-0 p-3 pt-0 tall:h-24 h-full">
+        <div className="bg-gradient-to-t from-zinc-950/50 to-zinc-900/10 h-full w-full absolute bottom-0 left-0" />
+
+        <div className="titlebar w-full flex flex-col justify-around items-center tall:absolute bottom-0 p-3 pt-0 tall:h-28 h-full">
           <div className="bg-gradient-to-t from-zinc-950 to-transparent h-full w-full absolute bottom-0 left-0" />
           <p className="titlebar w-full text-center text-white z-10 h-10 truncate px-4 pb-2 tall:pb-0 mt-4 tall:mt-0">
             {nowPlaying}

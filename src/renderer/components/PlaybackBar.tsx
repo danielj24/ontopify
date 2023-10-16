@@ -1,6 +1,5 @@
 import React from "react";
-import { BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
-import { BoltIcon, PlayCircleIcon, PauseCircleIcon, Bars4Icon } from "@heroicons/react/24/solid";
+import { MenuIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon, ZapIcon } from "lucide-react";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
 import { play, pause, next, previous } from "@/api/playback";
@@ -33,27 +32,29 @@ function PlaybackBar() {
 
   return (
     <div className="flex w-full items-center justify-around z-10">
-      <Bars4Icon className="titlebar-button text-zinc-500 h-8 w-8 cursor-not-allowed" />
-      <BackwardIcon
-        className="titlebar-button text-zinc-200 h-8 w-8 cursor-pointer hover:text-white transition-colors"
+      <MenuIcon className="titlebar-button stroke-zinc-500 h-7 w-7 cursor-not-allowed" />
+      <SkipBackIcon
+        className="titlebar-button stroke-zinc-200 fill-transparent hover:fill-zinc-200 h-7 w-7 cursor-pointer transition-colors"
         onClick={handlePrevious}
       />
-      {playbackState?.is_playing ? (
-        <PauseCircleIcon
-          className="titlebar-button text-zinc-200 h-14 w-14 cursor-pointer hover:text-white transition-colors"
-          onClick={togglePlayback}
-        />
-      ) : (
-        <PlayCircleIcon
-          className="titlebar-button text-zinc-200 h-14 w-14 cursor-pointer hover:text-white transition-colors"
-          onClick={togglePlayback}
-        />
-      )}
-      <ForwardIcon
-        className="titlebar-button text-zinc-200 h-8 w-8 cursor-pointer hover:text-white transition-colors"
+      <button className="w-14 h-14 flex justify-center items-center bg-white/20 hover:bg-white/30 transition-colors rounded-full p-3">
+        {playbackState?.is_playing ? (
+          <PauseIcon
+            className="titlebar-button stroke-zinc-200 fill-zinc-200 h-14 w-14 cursor-pointer transition-colors"
+            onClick={togglePlayback}
+          />
+        ) : (
+          <PlayIcon
+            className="titlebar-button stroke-zinc-200 fill-zinc-200 h-14 w-14 cursor-pointer transition-colors ml-1"
+            onClick={togglePlayback}
+          />
+        )}
+      </button>
+      <SkipForwardIcon
+        className="titlebar-button stroke-zinc-200 fill-transparent hover:fill-zinc-200 h-7 w-7 cursor-pointer transition-colors"
         onClick={handleNext}
       />
-      <BoltIcon className="titlebar-button h-8 w-8 text-yellow-400 stroke-yellow-600 hover:animate-spin" />
+      <ZapIcon className="titlebar-button h-7 w-7 fill-yellow-400 stroke-yellow-600 hover:animate-spin" />
     </div>
   );
 }

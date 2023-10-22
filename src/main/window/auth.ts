@@ -1,6 +1,6 @@
 import axios from "axios";
 import crypto from "crypto";
-import { BrowserWindow, app } from "electron";
+import { BrowserWindow, app, dialog } from "electron";
 import { resolveWindow } from "@/main/directive/window";
 import { saveToken } from "@/util/token";
 import { TokenType } from "@/type/token";
@@ -32,29 +32,39 @@ export default function AuthWindow() {
   authWindow.webContents.openDevTools();
 }
 
-app.on("open-url", (_: unknown, url: string) => handleAuthCallback(url));
-app.on("second-instance", (_: unknown, commandLine: string[]) => {
-  // @TODO: Continue on Windows
-  const windows = BrowserWindow.getAllWindows();
+// app.on("open-url", (_: unknown, url: string) => handleAuthCallback(url));
+// app.on("second-instance", (_: unknown, commandLine: string[]) => {
+//   // @TODO: Continue on Windows
+//   const windows = BrowserWindow.getAllWindows();
 
-  console.log(windows);
+//   console.log(windows);
 
-  // if (mainWindow) {
-  //   if (mainWindow.isMinimized()) mainWindow.restore()
-  //   mainWindow.focus()
-  // }
+//   // if (mainWindow) {
+//   //   if (mainWindow.isMinimized()) mainWindow.restore()
+//   //   mainWindow.focus()
+//   // }
 
-  const url = commandLine.pop();
+//   const url = commandLine.pop();
 
-  if (!url) return;
+//   if (!url) return;
 
-  handleAuthCallback(url);
-});
+//   handleAuthCallback(url);
+// });
 
 export async function handleAuthCallback(url: string) {
   if (!url.startsWith(SPOTIFY_REDIRECT_URI)) return;
 
-  const code = new URL(url).searchParams.get("code");
+  const code = url.replace(SPOTIFY_REDIRECT_URI, "");
+
+  dialog.showMessageBox({
+    message: code,
+  });
+
+  processAuthCode(code);
+}
+
+export async function processAuthCode(code: string) {
+  let openWindows: BrowserWindow[] = [];
 
   if (code) {
     try {
@@ -68,14 +78,15 @@ export async function handleAuthCallback(url: string) {
         },
       });
 
+      openWindows = BrowserWindow.getAllWindows();
+
       const { access_token, refresh_token } = response.data;
 
       saveToken(TokenType.ACCESS, access_token);
       saveToken(TokenType.REFRESH, refresh_token);
-
-      BrowserWindow.getAllWindows().forEach((window) => window.close());
     } finally {
-      resolveWindow();
+      await resolveWindow();
+      openWindows?.forEach((w) => w.close());
     }
   }
 }

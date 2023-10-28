@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useInterval } from "usehooks-ts";
-import { XCircleIcon } from "lucide-react";
+import { Loader2Icon, XCircleIcon } from "lucide-react";
 import PlaybackBar from "@renderer/components/PlaybackBar";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
@@ -18,9 +18,11 @@ function App(): JSX.Element {
   const albumImg = usePlaybackStore((s) => s.playbackState?.item?.album?.images?.[0]?.url);
 
   async function update(): Promise<void> {
-    const state = await fetchPlaybackState(tokenStore.spotify);
+    if (!tokenStore.spotify) return;
 
     if (typeof tokenStore.spotify !== "string") console.log(tokenStore.spotify);
+
+    const state = await fetchPlaybackState(tokenStore.spotify);
 
     if ((state as PlaybackErrorResponse)?.error?.status === 401) {
       const resp = await window.api.refreshToken();
@@ -29,8 +31,7 @@ function App(): JSX.Element {
       console.log(resp);
 
       if ((resp as TokenErrorResponse)?.error === "invalid_grant") {
-        console.log("=== re-auth app ===");
-        await window.api.unauth();
+        await window.api.reauth();
 
         return;
       }
@@ -45,10 +46,11 @@ function App(): JSX.Element {
 
   useEffect(() => {
     async function getSetToken(): Promise<void> {
+      console.log("=== get set token ===");
       const key = await window.api.getToken();
 
       if (key === null || key === "") {
-        await window.api.unauth();
+        await window.api.reauth();
         return;
       }
 
@@ -58,7 +60,20 @@ function App(): JSX.Element {
     getSetToken();
   }, []);
 
-  if (tokenStore.spotify === null) return <div>Loading...</div>;
+  useEffect(() => {
+    // listen for token changes from main process and update it in the zustand store
+    window.api.setTokenStore((_: Electron.IpcRendererEvent, token: string) => {
+      tokenStore.setSpotifyToken(token);
+      update();
+    });
+  }, []);
+
+  if (!tokenStore.spotify)
+    return (
+      <div className="flex w-full h-full items-center justify-center bg-zinc-950 text-white titlebar">
+        <Loader2Icon className="animate-spin mr-2" /> Authorising spotify...
+      </div>
+    );
 
   return (
     <div className="h-full w-full bg-zinc-950 relative transition-all">

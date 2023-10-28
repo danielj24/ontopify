@@ -7,6 +7,8 @@ interface Api {
   getToken: () => Promise<string>;
   refreshToken: () => Promise<string> | Promise<TokenErrorResponse>;
   unauth: () => Promise<void>;
+  reauth: () => Promise<void>;
+  setTokenStore: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => void;
 }
 
 declare global {
@@ -18,9 +20,19 @@ declare global {
 
 const api = {
   isDev: process.env.NODE_ENV === "development",
+
+  // get token from os keychain
   getToken: async () => await ipcRenderer.invoke("token:get"),
+  // refresh token from spotify
   refreshToken: async () => await ipcRenderer.invoke("token:refresh"),
+  // delete tokens
   unauth: async () => await ipcRenderer.invoke("unauth"),
+  // delete tokens and reauth
+  reauth: async () => await ipcRenderer.invoke("reauth"),
+  // used to set the token in the store from the main process
+  setTokenStore: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => {
+    ipcRenderer.on("token:set", callback);
+  },
 };
 
 if (process.contextIsolated) {

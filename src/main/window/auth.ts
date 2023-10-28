@@ -1,7 +1,6 @@
 import axios from "axios";
 import crypto from "crypto";
-import { BrowserWindow, app, dialog } from "electron";
-import { resolveWindow } from "@/main/directive/window";
+import { BrowserWindow } from "electron";
 import { saveToken } from "@/util/token";
 import { TokenType } from "@/type/token";
 import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI } from "~/env";
@@ -11,7 +10,17 @@ const SCOPES = ["user-read-private", "user-read-email", "user-read-playback-stat
 const CODE_VERIFIER = generateCodeVerifier();
 const CODE_CHALLENGE = generateCodeChallenge(CODE_VERIFIER);
 
+const MAIN_WINDOW_TITLE = "ontopify";
+const AUTH_WINDOW_TITLE = "Authorize - Spotify";
+
 export default function AuthWindow() {
+  const existingAuthWindow = BrowserWindow.getAllWindows().find((window) => window.title === AUTH_WINDOW_TITLE);
+
+  if (existingAuthWindow) {
+    existingAuthWindow.focus();
+    return;
+  }
+
   const authWindow = new BrowserWindow({
     width: 400,
     height: 600,
@@ -32,40 +41,7 @@ export default function AuthWindow() {
   authWindow.webContents.openDevTools();
 }
 
-// app.on("open-url", (_: unknown, url: string) => handleAuthCallback(url));
-// app.on("second-instance", (_: unknown, commandLine: string[]) => {
-//   // @TODO: Continue on Windows
-//   const windows = BrowserWindow.getAllWindows();
-
-//   console.log(windows);
-
-//   // if (mainWindow) {
-//   //   if (mainWindow.isMinimized()) mainWindow.restore()
-//   //   mainWindow.focus()
-//   // }
-
-//   const url = commandLine.pop();
-
-//   if (!url) return;
-
-//   handleAuthCallback(url);
-// });
-
-export async function handleAuthCallback(url: string) {
-  if (!url.startsWith(SPOTIFY_REDIRECT_URI)) return;
-
-  const code = url.replace(SPOTIFY_REDIRECT_URI, "");
-
-  dialog.showMessageBox({
-    message: code,
-  });
-
-  processAuthCode(code);
-}
-
-export async function processAuthCode(code: string) {
-  let openWindows: BrowserWindow[] = [];
-
+export async function handleAuthCode(code: string) {
   if (code) {
     try {
       const response = await axios.post("https://accounts.spotify.com/api/token", null, {
@@ -78,15 +54,22 @@ export async function processAuthCode(code: string) {
         },
       });
 
-      openWindows = BrowserWindow.getAllWindows();
-
       const { access_token, refresh_token } = response.data;
 
       saveToken(TokenType.ACCESS, access_token);
       saveToken(TokenType.REFRESH, refresh_token);
-    } finally {
-      await resolveWindow();
-      openWindows?.forEach((w) => w.close());
+
+      const mainWindow = BrowserWindow.getAllWindows().find((window) => window.title === MAIN_WINDOW_TITLE);
+      const remainingWindows = BrowserWindow.getAllWindows().filter((window) => window.title !== MAIN_WINDOW_TITLE);
+
+      if (!mainWindow) {
+        throw new Error("Main window not found");
+      }
+
+      remainingWindows.forEach((window) => window.close());
+      mainWindow.webContents.send("token:set", access_token);
+    } catch (error) {
+      console.error(error);
     }
   }
 }

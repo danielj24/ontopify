@@ -13,3 +13,5 @@ export const useTokenStore = create<TokenStore>((set) => ({
   spotify: "",
   setSpotifyToken: (token: string) => set({ spotify: token }),
 }));
+
+export const getTokenStore = useTokenStore.getState;

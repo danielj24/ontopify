@@ -2,9 +2,9 @@ import { app, BrowserWindow, dialog, ipcMain, protocol } from "electron";
 import path from "path";
 import { getToken, deleteTokens, refreshToken } from "@/util/token";
 import { TokenType } from "./type/token";
-import AuthWindow, { handleAuthCode } from "./main/window/auth";
+import AppWindow from "@/main/window/app";
+import AuthWindow, { handleAuthCode } from "@/main/window/auth";
 import { SPOTIFY_REDIRECT_URI } from "~/env";
-import AppWindow from "./main/window/app";
 
 ipcMain.handle("token:get", async () => await getToken(TokenType.ACCESS));
 
@@ -29,17 +29,9 @@ if (require("electron-squirrel-startup")) {
 
 app.on("ready", () => {
   AppWindow();
-  // resolveWindow().catch(console.error);
 
   protocol.handle("ontopify", (req): Response => {
-    console.log("PROTOCOL ontopify");
-    console.log(req.url);
-
     const code = req.url.replace(SPOTIFY_REDIRECT_URI + "/?code=", "");
-
-    dialog.showMessageBox({
-      message: code,
-    });
 
     handleAuthCode(code);
 

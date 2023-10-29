@@ -50,5 +50,5 @@ export async function refreshToken() {
   saveToken(TokenType.ACCESS, json.access_token);
   saveToken(TokenType.REFRESH, json.refresh_token);
 
-  return json;
+  return json.access_token;
 }

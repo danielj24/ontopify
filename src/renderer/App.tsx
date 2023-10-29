@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useInterval } from "usehooks-ts";
 import { Loader2Icon, XCircleIcon } from "lucide-react";
 import PlaybackBar from "@renderer/components/PlaybackBar";

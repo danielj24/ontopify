@@ -36,9 +36,14 @@ export default function AuthWindow() {
   )}`;
 
   authWindow.loadURL(authUrl);
-  authWindow.show();
+  authWindow.setAlwaysOnTop(true, "floating");
+  authWindow.setVisibleOnAllWorkspaces(true);
+  authWindow.setFullScreenable(false);
 
-  authWindow.webContents.openDevTools();
+  authWindow.on("ready-to-show", () => {
+    authWindow.show();
+    authWindow.webContents.openDevTools();
+  });
 }
 
 export async function handleAuthCode(code: string) {

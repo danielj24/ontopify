@@ -77,11 +77,11 @@ function App(): JSX.Element {
 
   return (
     <div className="h-full w-full bg-zinc-950 relative transition-all">
-      <img src={albumImg} alt="" className="h-full w-full object-cover absolute top-0 blur-xl pointer-events-none" />
-      <div className="absolute right-0 top-0 z-30 w-10 h-10 opacity-100" onClick={() => console.log("kill app")}>
-        <div className="h-24 w-24 bg-[radial-gradient(at_right_top,_black,#00000000,#00000000)] absolute -top-1 -right-1 pointer-events-none" />
-        <XCircleIcon className="titlebar-button text-zinc-200 hover:text-white w-6 cursor-pointer z-10 absolute top-2 right-2" />
-      </div>
+      <img
+        src={albumImg}
+        alt=""
+        className="h-full w-full object-cover absolute top-0 blur-xl pointer-events-none z-0"
+      />
       <div className="titlebar flex h-full justify-center relative tall:pb-24">
         <div className="w-full h-full hidden tall:flex items-center justify-center p-4 pb-8 pointer-events-none">
           <img
@@ -101,6 +101,11 @@ function App(): JSX.Element {
           <PlaybackBar />
         </div>
       </div>
+
+      <button className="absolute right-0 top-0 z-30 w-10 h-10 opacity-100" onClick={window.api.kill}>
+        <div className="h-24 w-24 bg-[radial-gradient(at_right_top,_black,#00000000,#00000000)] absolute -top-1 -right-1 pointer-events-none" />
+        <XCircleIcon className="titlebar-button text-zinc-200 hover:text-white w-6 cursor-pointer z-10 absolute top-2 right-2" />
+      </button>
     </div>
   );
 }

@@ -16,10 +16,11 @@ ipcMain.handle("unauth", async () => {
 
 ipcMain.handle("reauth", async () => {
   deleteTokens();
-
-  console.log("REAUTH");
-
   AuthWindow();
+});
+
+ipcMain.handle("kill", async () => {
+  app.quit();
 });
 
 if (require("electron-squirrel-startup")) {

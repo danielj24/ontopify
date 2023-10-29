@@ -8,6 +8,7 @@ interface Api {
   refreshToken: () => Promise<string> | Promise<TokenErrorResponse>;
   unauth: () => Promise<void>;
   reauth: () => Promise<void>;
+  kill: () => Promise<void>;
   setTokenStore: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => void;
 }
 
@@ -29,6 +30,8 @@ const api = {
   unauth: async () => await ipcRenderer.invoke("unauth"),
   // delete tokens and reauth
   reauth: async () => await ipcRenderer.invoke("reauth"),
+  // kill the app
+  kill: async () => await ipcRenderer.invoke("kill"),
   // used to set the token in the store from the main process
   setTokenStore: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => {
     ipcRenderer.on("token:set", callback);

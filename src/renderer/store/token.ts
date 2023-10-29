@@ -1,8 +1,5 @@
 import { create } from "zustand";
-
-enum Tokens {
-  SPOTIFY = "spotify",
-}
+import { Tokens } from "@/type/token";
 
 interface TokenStore {
   [Tokens.SPOTIFY]: string;
@@ -10,8 +7,6 @@ interface TokenStore {
 }
 
 export const useTokenStore = create<TokenStore>((set) => ({
-  spotify: "",
-  setSpotifyToken: (token: string) => set({ spotify: token }),
+  [Tokens.SPOTIFY]: "",
+  setSpotifyToken: (token: string) => set({ [Tokens.SPOTIFY]: token }),
 }));
-
-export const getTokenStore = useTokenStore.getState;

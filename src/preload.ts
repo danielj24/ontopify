@@ -1,15 +1,21 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI, ElectronAPI } from "@electron-toolkit/preload";
-import { TokenErrorResponse } from "@/type/token";
+import { TokenErrorResponse, Tokens } from "@/type/token";
 
 interface Api {
   isDev: boolean;
+
   getToken: () => Promise<string>;
   refreshToken: () => Promise<string> | Promise<TokenErrorResponse>;
   unauth: () => Promise<void>;
   reauth: () => Promise<void>;
   kill: () => Promise<void>;
-  setTokenStore: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => void;
+
+  getWebPlayerToken: () => Promise<void>;
+
+  fetchLyrics: (trackId: string) => Promise<string>;
+
+  handleSetToken: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => void;
 }
 
 declare global {
@@ -19,7 +25,7 @@ declare global {
   }
 }
 
-const api = {
+const api: Api = {
   isDev: process.env.NODE_ENV === "development",
 
   // get token from os keychain
@@ -32,8 +38,15 @@ const api = {
   reauth: async () => await ipcRenderer.invoke("reauth"),
   // kill the app
   kill: async () => await ipcRenderer.invoke("kill"),
+
+  // get web player token from spotify
+  getWebPlayerToken: async () => await ipcRenderer.invoke("wp-token"),
+
+  // fetch lyrics from spotify
+  fetchLyrics: async (trackId: string) => await ipcRenderer.invoke("lyrics:fetch", trackId),
+
   // used to set the token in the store from the main process
-  setTokenStore: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => {
+  handleSetToken: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => {
     ipcRenderer.on("token:set", callback);
   },
 };

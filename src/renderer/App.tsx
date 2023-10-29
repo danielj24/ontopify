@@ -6,23 +6,23 @@ import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
 import { fetchPlaybackState } from "@/api/playback";
 import SpotifyPlaybackState, { PlaybackErrorResponse } from "@/type/playback";
-import { TokenErrorResponse } from "@/type/token";
+import { TokenErrorResponse, Tokens } from "@/type/token";
 
 function App(): JSX.Element {
-  const tokenStore = useTokenStore();
+  const token = useTokenStore((s) => s.spotify);
+  const setSpotifyToken = useTokenStore((s) => s.setSpotifyToken);
   const setPlaybackState = usePlaybackStore((s) => s.setPlaybackState);
-
   const nowPlaying = usePlaybackStore((s) =>
     s.playbackState?.item != null ? `${s.playbackState?.item.name} - ${s.playbackState?.item.artists[0].name}` : "",
   );
   const albumImg = usePlaybackStore((s) => s.playbackState?.item?.album?.images?.[0]?.url);
 
   async function update(): Promise<void> {
-    if (!tokenStore.spotify) return;
+    if (!token) return;
 
-    if (typeof tokenStore.spotify !== "string") console.log(tokenStore.spotify);
+    if (typeof token !== "string") console.log(token);
 
-    const state = await fetchPlaybackState(tokenStore.spotify);
+    const state = await fetchPlaybackState(token);
 
     if ((state as PlaybackErrorResponse)?.error?.status === 401) {
       const resp = await window.api.refreshToken();
@@ -36,7 +36,7 @@ function App(): JSX.Element {
         return;
       }
 
-      tokenStore.setSpotifyToken(resp as string);
+      setSpotifyToken(resp as string);
     }
 
     setPlaybackState(state as SpotifyPlaybackState);
@@ -54,21 +54,24 @@ function App(): JSX.Element {
         return;
       }
 
-      tokenStore.setSpotifyToken(key);
+      setSpotifyToken(key);
     }
 
     getSetToken();
   }, []);
 
   useEffect(() => {
+    // get web player token from spotify and set in main process
+    window.api.getWebPlayerToken();
+
     // listen for token changes from main process and update it in the zustand store
-    window.api.setTokenStore((_: Electron.IpcRendererEvent, token: string) => {
-      tokenStore.setSpotifyToken(token);
+    window.api.handleSetToken(async (_: Electron.IpcRendererEvent, token: string) => {
+      setSpotifyToken(token);
       update();
     });
   }, []);
 
-  if (!tokenStore.spotify)
+  if (!token)
     return (
       <div className="flex w-full h-full items-center justify-center bg-zinc-950 text-white titlebar">
         <Loader2Icon className="animate-spin mr-2" /> Authorising spotify...

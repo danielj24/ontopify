@@ -2,16 +2,15 @@ import axios from "axios";
 import crypto from "crypto";
 import { BrowserWindow } from "electron";
 import { saveToken } from "@/util/token";
-import { TokenType } from "@/type/token";
+import { TokenType, Tokens } from "@/type/token";
+import { AUTH_WINDOW_TITLE, MAIN_WINDOW_TITLE } from "@/consts/window";
 import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI } from "~/env";
+import getMainWindow, { getAllExceptMainWindow } from "~/src/util/getMainWindow";
 
 const SCOPES = ["user-read-private", "user-read-email", "user-read-playback-state", "user-modify-playback-state"];
 
 const CODE_VERIFIER = generateCodeVerifier();
 const CODE_CHALLENGE = generateCodeChallenge(CODE_VERIFIER);
-
-const MAIN_WINDOW_TITLE = "ontopify";
-const AUTH_WINDOW_TITLE = "Authorize - Spotify";
 
 export default function AuthWindow() {
   const existingAuthWindow = BrowserWindow.getAllWindows().find((window) => window.title === AUTH_WINDOW_TITLE);
@@ -64,15 +63,15 @@ export async function handleAuthCode(code: string) {
       saveToken(TokenType.ACCESS, access_token);
       saveToken(TokenType.REFRESH, refresh_token);
 
-      const mainWindow = BrowserWindow.getAllWindows().find((window) => window.title === MAIN_WINDOW_TITLE);
-      const remainingWindows = BrowserWindow.getAllWindows().filter((window) => window.title !== MAIN_WINDOW_TITLE);
+      const main = getMainWindow();
+      const remainingWindows = getAllExceptMainWindow();
 
-      if (!mainWindow) {
+      if (!main) {
         throw new Error("Main window not found");
       }
 
       remainingWindows.forEach((window) => window.close());
-      mainWindow.webContents.send("token:set", access_token);
+      main.webContents.send("token:set", access_token, Tokens.SPOTIFY);
     } catch (error) {
       console.error(error);
     }

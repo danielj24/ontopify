@@ -1,5 +1,6 @@
-import SpotifyPlaybackState from "@/type/playback";
 import { create } from "zustand";
+
+import type { SpotifyPlaybackState } from "@/type/playback";
 
 interface PlaybackStore {
   playbackState: SpotifyPlaybackState | null;
@@ -9,6 +10,8 @@ interface PlaybackStore {
 
 export const usePlaybackStore = create<PlaybackStore>((set, get) => ({
   playbackState: null,
+
+  setPlaybackState: (state: SpotifyPlaybackState) => set({ playbackState: state }),
 
   setIsPlaying: (isPlaying: boolean) => {
     const state = get().playbackState;
@@ -22,6 +25,4 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => ({
       },
     });
   },
-
-  setPlaybackState: (state: SpotifyPlaybackState) => set({ playbackState: state }),
 }));

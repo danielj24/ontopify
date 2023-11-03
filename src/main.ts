@@ -74,7 +74,11 @@ ipcMain.handle("lyrics:fetch", async (event, trackId) => {
   // "4JhmSvV4j4kMw8w7FHu7DI" - no lyrics
   // "6tsN6iV90fo6pyJ2U0f7Uk" - lyrics
 
-  return fetchLyrics(wpToken, trackId);
+  const response = await fetchLyrics(wpToken, trackId);
+
+  if (!response.lyrics) return response;
+
+  return response.lyrics.lines;
 });
 
 app.on("window-all-closed", () => {

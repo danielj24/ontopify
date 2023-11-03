@@ -23,9 +23,6 @@ export default function PlaybackSeeker() {
 
     const newProgress = ~~((value / 100) * playbackState.item.duration_ms);
 
-    console.log(newProgress);
-    console.log(value);
-
     try {
       await seek(token, newProgress);
       setPlaybackState({ ...playbackState, progress_ms: newProgress });

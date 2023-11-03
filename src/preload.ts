@@ -1,7 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI, ElectronAPI } from "@electron-toolkit/preload";
-import { TokenErrorResponse, Tokens } from "@/type/token";
 
+import type { Lyric } from "@/type/lyrics";
+import type { TokenErrorResponse } from "@/type/token";
 interface Api {
   isDev: boolean;
 
@@ -13,7 +14,7 @@ interface Api {
 
   getWebPlayerToken: () => Promise<void>;
 
-  fetchLyrics: (trackId: string) => Promise<string>;
+  fetchLyrics: (trackId: string) => Promise<Lyric[]>;
 
   handleSetToken: (callback: (event: Electron.IpcRendererEvent, token: string) => void) => void;
 }

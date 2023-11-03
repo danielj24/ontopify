@@ -19,6 +19,9 @@ export const useLyricsStore = create<LyricsStore>((set) => ({
     const storedLyrics = JSON.parse(window.localStorage.getItem(trackId) as string) as Lyrics;
 
     if (storedLyrics) {
+      console.log("Lyrics found in local storage");
+      console.log(storedLyrics);
+
       set({ current: storedLyrics });
       return;
     }
@@ -37,6 +40,8 @@ export const useLyricsStore = create<LyricsStore>((set) => ({
         trackId,
         lyrics: lyricsResp,
       };
+
+      window.localStorage.setItem(trackId, JSON.stringify(lyrics));
 
       set({ current: lyrics });
     } catch (error) {

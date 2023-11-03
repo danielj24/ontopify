@@ -1,22 +1,26 @@
 import React, { useEffect } from "react";
 import { useInterval } from "usehooks-ts";
 import { Loader2Icon, XCircleIcon } from "lucide-react";
-import PlaybackBar from "@renderer/components/PlaybackBar";
+import { Marquee } from "@/renderer/components/ui/marquee";
+import PlaybackBar from "@renderer/components/playback-bar";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
 import { fetchPlaybackState } from "@/api/playback";
-import SpotifyPlaybackState, { PlaybackErrorResponse } from "@/type/playback";
-import { TokenErrorResponse, Tokens } from "@/type/token";
+
+import type { PlaybackErrorResponse, SpotifyPlaybackState } from "@/type/playback";
+import type { TokenErrorResponse } from "@/type/token";
 
 function App(): JSX.Element {
   const token = useTokenStore((s) => s.spotify);
   const setSpotifyToken = useTokenStore((s) => s.setSpotifyToken);
+
   const setPlaybackState = usePlaybackStore((s) => s.setPlaybackState);
+  const albumImg = usePlaybackStore((s) => s.playbackState?.item?.album?.images?.[0]?.url);
   const nowPlaying = usePlaybackStore((s) =>
     s.playbackState?.item != null ? `${s.playbackState?.item.name} - ${s.playbackState?.item.artists[0].name}` : "",
   );
-  const albumImg = usePlaybackStore((s) => s.playbackState?.item?.album?.images?.[0]?.url);
 
+  // @TODO: abstract this and the interval into a hook?
   async function update(): Promise<void> {
     if (!token) return;
 
@@ -45,6 +49,7 @@ function App(): JSX.Element {
   useInterval(update, 1_000);
 
   useEffect(() => {
+    // @TODO: check this actually works, should this live here?
     async function getSetToken(): Promise<void> {
       console.log("=== get set token ===");
       const key = await window.api.getToken();
@@ -85,7 +90,7 @@ function App(): JSX.Element {
         alt=""
         className="h-full w-full object-cover absolute top-0 blur-xl pointer-events-none z-0"
       />
-      <div className="titlebar flex h-full justify-center relative tall:pb-24">
+      <div className="titlebar flex h-full justify-center relative tall:pb-28">
         <div className="w-full h-full hidden tall:flex items-center justify-center p-4 pb-8 pointer-events-none">
           <img
             src={albumImg}
@@ -96,18 +101,21 @@ function App(): JSX.Element {
 
         <div className="bg-gradient-to-t from-zinc-950/50 to-zinc-900/10 h-full w-full absolute bottom-0 left-0" />
 
-        <div className="titlebar w-full flex flex-col justify-around items-center tall:absolute bottom-0 p-3 pt-0 tall:h-28 h-full">
+        <div className="titlebar w-full flex flex-col justify-around items-center tall:absolute bottom-0 p-4 pt-0 tall:h-32 h-full">
           <div className="bg-gradient-to-t from-zinc-950 to-transparent h-full w-full absolute bottom-0 left-0" />
-          <p className="titlebar w-full text-center text-white z-10 h-10 truncate px-4 pb-2 tall:pb-0 mt-4 tall:mt-0">
-            {nowPlaying}
-          </p>
+          {/* @TODO: improve marquee, use js to calculate width of text and animate it */}
+          <Marquee>
+            <p className="titlebar w-full text-center text-white z-10 h-10 truncate px-4 pb-2 tall:pb-0 mt-4 tall:mt-0">
+              {nowPlaying}
+            </p>
+          </Marquee>
           <PlaybackBar />
         </div>
       </div>
 
       <button className="absolute right-0 top-0 z-30 w-10 h-10 opacity-100" onClick={window.api.kill}>
         <div className="h-24 w-24 bg-[radial-gradient(at_right_top,_black,#00000000,#00000000)] absolute -top-1 -right-1 pointer-events-none" />
-        <XCircleIcon className="titlebar-button text-zinc-200 hover:text-white w-6 cursor-pointer z-10 absolute top-2 right-2" />
+        <XCircleIcon className="titlebar-button text-zinc-200/70 hover:text-zinc-200 transition-colors w-6 cursor-pointer z-10 absolute top-2 right-2" />
       </button>
     </div>
   );

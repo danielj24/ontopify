@@ -1,16 +1,18 @@
 import React from "react";
-import { MenuIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon, ZapIcon } from "lucide-react";
+import { MenuIcon, MicIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from "lucide-react";
+import PlaybackSeeker from "@/renderer/components/playback-seeker";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
 import { play, pause, next, previous } from "@/api/playback";
+import { intervalToDuration, millisecondsToMinutes } from "date-fns";
 
 function PlaybackBar() {
   const token = useTokenStore((s) => s.spotify);
   const currentTrackID = usePlaybackStore((s) => s.playbackState?.item?.id);
   const playbackState = usePlaybackStore((s) => s.playbackState);
   const setIsPlaying = usePlaybackStore((s) => s.setIsPlaying);
-
-  const seekerPostion = playbackState ? playbackState?.progress_ms / playbackState?.item?.duration_ms : 0;
+  const currentTime = intervalToDuration({ start: 0, end: playbackState?.progress_ms || 0 });
+  const duration = intervalToDuration({ start: 0, end: playbackState?.item?.duration_ms || 0 });
 
   async function togglePlayback() {
     if (playbackState == null) return;
@@ -43,13 +45,17 @@ function PlaybackBar() {
 
   return (
     <div className="flex flex-col w-full z-10">
-      {/* Track scrubber */}
-      <div className="relative">
-        <div className="w-full h-1 rounded-full bg-white/20 mb-2" />
-        <div
-          className="w-3 h-3 rounded-full bg-white absolute -top-1 transition-all"
-          style={{ left: `${seekerPostion * 100}%` }}
-        />
+      {/* Track seeker */}
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="text-white text-xs">
+          {currentTime.minutes}:{`${currentTime.seconds}`.padStart(2, "0")}
+        </span>
+        <div className="w-4/5 titlebar-button">
+          <PlaybackSeeker />
+        </div>
+        <span className="text-white text-xs">
+          {duration.minutes}:{`${duration.seconds}`.padStart(2, "0")}
+        </span>
       </div>
 
       {/* Playback controls */}
@@ -76,10 +82,7 @@ function PlaybackBar() {
           className="titlebar-button stroke-zinc-200 fill-transparent hover:fill-zinc-200 h-7 w-7 cursor-pointer transition-colors"
           onClick={handleNext}
         />
-        <ZapIcon
-          onClick={toggleLyrics}
-          className="titlebar-button h-7 w-7 fill-yellow-400 stroke-yellow-600 hover:animate-spin"
-        />
+        <MicIcon onClick={toggleLyrics} className="titlebar-button h-7 w-7 stroke-zinc-200" />
       </div>
     </div>
   );

@@ -88,7 +88,7 @@ export interface PlaybackErrorResponse {
   };
 }
 
-export default interface SpotifyPlaybackState {
+export interface SpotifyPlaybackState {
   device: Device;
   shuffle_state: boolean;
   repeat_state: string;

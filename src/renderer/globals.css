@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html, body, #root {
-  @apply h-screen w-screen;
+  @apply h-screen w-screen bg-zinc-900;
 }
 
 #root {

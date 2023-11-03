@@ -5,9 +5,9 @@ export default function AppWindow() {
   const mainWindow = new BrowserWindow({
     width: 300,
     minWidth: 300,
-    maxWidth: 450,
+    maxWidth: 300,
     height: 385,
-    minHeight: 120,
+    minHeight: 150,
     maxHeight: 400,
     show: false,
     frame: false,
@@ -32,28 +32,11 @@ export default function AppWindow() {
     return { action: "deny" };
   });
 
-  // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     mainWindow.loadFile(join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
-  // Open the DevTools.
   mainWindow.webContents.openDevTools();
-
-  // const filter = ["https://spclient.wg.spotify.com/*"];
-
-  // mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
-  //   callback({ requestHeaders: { Origin: "*", ...details.requestHeaders } });
-  // });
-
-  // mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-  //   callback({
-  //     responseHeaders: {
-  //       "Access-Control-Allow-Origin": ["*"],
-  //       ...details.responseHeaders,
-  //     },
-  //   });
-  // });
 }

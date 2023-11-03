@@ -17,8 +17,6 @@ export async function fetchLyrics(token: string, trackID: string) {
 
     const json = await result.json();
 
-    console.log(json);
-
     return json;
   } catch (error) {
     console.error(error);

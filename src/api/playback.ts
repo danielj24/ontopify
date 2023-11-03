@@ -46,3 +46,12 @@ export async function previous(token: string) {
     headers: { Authorization: `Bearer ${token}` },
   });
 }
+
+export async function seek(token: string, positionMs: number) {
+  if (!token || !positionMs) return;
+
+  await fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${positionMs}`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}

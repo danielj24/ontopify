@@ -1,5 +1,6 @@
 # ontopify
-![0065e354ab2cd6ef0159a93e44a61056](https://github.com/danielj247/ontopify/assets/92366070/f7281278-3480-4cbb-a6f8-972b7c367f65)
+![3f185ba0c24d07c68b111c7e4cbe05eb](https://github.com/danielj247/ontopify/assets/92366070/caa7c416-4b6e-45dc-aafd-577d92d377d3)
+
 
 
 ## Development

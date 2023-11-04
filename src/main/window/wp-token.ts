@@ -2,7 +2,6 @@ import { BrowserWindow } from "electron";
 import path from "path";
 
 export default function WebPlayerTokenWindow() {
-  // return as a promise
   return new Promise((resolve) => {
     const window = new BrowserWindow({
       width: 400,

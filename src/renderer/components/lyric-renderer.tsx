@@ -39,6 +39,8 @@ export default function LyricRenderer(props: LyricRendererProps) {
     const noStartTimes = renderLyrics.every((lyric) => +lyric.startTimeMs === 0);
 
     setNoSync(noStartTimes);
+
+    setCurrentLyricIx(0);
   }, [renderLyrics]);
 
   useEffect(() => {
@@ -68,33 +70,37 @@ export default function LyricRenderer(props: LyricRendererProps) {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full text-center relative" ref={parentRef}>
-      {noSync && (
-        <p className="text-white text-xs absolute w-full -top-1 left-1/2 -translate-x-1/2">
-          We have no sync for this song, sorry!
-        </p>
-      )}
+      {/* {noSync && <p className="text-white underline text-xs w-full py-2">No sync available for this song</p>} */}
       <div
         ref={scrollRef}
-        className="relative w-full h-full overflow-y-scroll titlebar-button py-4"
+        className="relative w-full h-full overflow-y-scroll overflow-x-hidden titlebar-button py-4"
         onWheel={() => {
           setScrolling(true);
         }}
       >
+        {noSync && (
+          <Badge variant="destructive" className="mb-4">
+            No sync available for this song
+          </Badge>
+        )}
         {renderLyrics.map((lyric, ix) => {
-          const isCurrent = noSync || ix === currentLyricIx;
+          const isCurrent = ix === currentLyricIx;
 
           return (
             <div
               key={ix}
               ref={(el) => (lyricRefs.current[ix] = el as HTMLDivElement)}
               onClick={async () => {
+                if (noSync) return;
+
                 seek(lyric.startTimeMs);
                 setScrolling(false);
                 scrollToIx(ix);
               }}
               className={cn(
-                "font-bold text-white/20 w-full text-center py-2 text-sm transition-all cursor-pointer",
-                isCurrent && "text-white text-lg",
+                "font-bold text-white/20 w-full text-center p-2 text-sm transition-all cursor-pointer",
+                !noSync && isCurrent && "text-white scale-110",
+                noSync && "text-white/80",
               )}
             >
               {lyric.words}
@@ -102,10 +108,10 @@ export default function LyricRenderer(props: LyricRendererProps) {
           );
         })}
       </div>
-      {scrolling && (
+      {scrolling && !noSync && (
         <Badge
           variant="secondary"
-          className="absolute bottom-2 mx-auto titlebar-button cursor-pointer"
+          className="absolute bottom-4 mx-auto titlebar-button cursor-pointer"
           onClick={() => {
             setScrolling(false);
             scrollToIx(currentLyricIx);

@@ -2,10 +2,11 @@ import axios from "axios";
 import crypto from "crypto";
 import { BrowserWindow } from "electron";
 import { saveToken } from "@/util/token";
-import { TokenType, Tokens } from "@/type/token";
-import { AUTH_WINDOW_TITLE, MAIN_WINDOW_TITLE } from "@/consts/window";
+import getMainWindow, { getAllExceptMainWindow } from "@/util/getMainWindow";
+import { TokenType, Tokens } from "@/enum/token";
+import { AUTH_WINDOW_TITLE } from "@/consts/window";
+
 import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI } from "~/env";
-import getMainWindow, { getAllExceptMainWindow } from "~/src/util/getMainWindow";
 
 const SCOPES = ["user-read-private", "user-read-email", "user-read-playback-state", "user-modify-playback-state"];
 

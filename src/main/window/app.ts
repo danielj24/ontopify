@@ -1,18 +1,14 @@
 import { BrowserWindow, shell } from "electron";
 import { join } from "path";
-
-// sm -> 300 x 150
-// md -> 300 x 300
-// lg -> 300 x 430
+import { LayoutHeight, LayoutWidth } from "@/enum/layout";
 
 export default function AppWindow() {
   const mainWindow = new BrowserWindow({
-    width: 300,
-    minWidth: 300,
-    maxWidth: 300,
-    height: 430,
-    minHeight: 150,
-    maxHeight: 430,
+    width: LayoutWidth.LARGE,
+    minWidth: LayoutWidth.LARGE,
+    maxWidth: LayoutWidth.LARGE,
+    height: LayoutHeight.LARGE,
+    maxHeight: LayoutHeight.LARGE,
     show: false,
     frame: false,
     autoHideMenuBar: true,

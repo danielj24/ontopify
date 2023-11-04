@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base */
+
 html, body, #root {
   @apply h-screen w-screen bg-zinc-900;
 }
@@ -10,6 +12,8 @@ html, body, #root {
   @apply antialiased;
 }
 
+/* Electron classes */
+
 .titlebar {
   -webkit-user-select: none;
   -webkit-app-region: drag;
@@ -17,4 +21,18 @@ html, body, #root {
 
 .titlebar-button {
   -webkit-app-region: no-drag;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded bg-zinc-950 hover:bg-zinc-600;
+}
+
+::-webkit-scrollbar-corner {
+  @apply bg-transparent;
 }

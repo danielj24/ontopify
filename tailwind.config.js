@@ -11,9 +11,6 @@ module.exports = {
       },
     },
     extend: {
-      screens: {
-        tall: { raw: "(min-height: 181px)" },
-      },
       keyframes: {
         "accordion-down": {
           from: { height: 0 },

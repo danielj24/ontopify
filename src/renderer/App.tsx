@@ -1,27 +1,29 @@
 import React, { useEffect } from "react";
 import { useInterval } from "usehooks-ts";
-import { Loader2Icon, XCircleIcon } from "lucide-react";
-import PlaybackBar from "@renderer/components/playback-bar";
-import Marquee from "@/renderer/components/ui/marquee";
+import { Loader2Icon } from "lucide-react";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
 import { useLyricsStore } from "@/renderer/store/lyrics";
 import { usePlaybackLifecycle } from "@/renderer/hooks/usePlaybackLifecycle";
-import PlaybackMedia from "@/renderer/components/playback-media";
+import useLayout from "@/renderer/hooks/useLayout";
+import Header from "@/renderer/components/header";
+import Small from "@/renderer/layouts/small";
+import Medium from "@/renderer/layouts/medium";
+import Large from "@/renderer/layouts/large";
+import { Layout } from "@/enum/layout";
 import { fetchPlaybackState } from "@/api/playback";
 
 import type { Item, PlaybackErrorResponse, SpotifyPlaybackState } from "@/type/playback";
 import type { TokenErrorResponse } from "@/type/token";
 
 function App(): JSX.Element {
+  const layout = useLayout();
+
   const token = useTokenStore((s) => s.spotify);
   const setSpotifyToken = useTokenStore((s) => s.setSpotifyToken);
 
   const setPlaybackState = usePlaybackStore((s) => s._setPlaybackState);
   const albumImg = usePlaybackStore((s) => s.playbackState?.item?.album?.images?.[0]?.url);
-  const nowPlaying = usePlaybackStore((s) =>
-    s.playbackState?.item != null ? `${s.playbackState?.item.name} - ${s.playbackState?.item.artists[0].name}` : "",
-  );
 
   const showLyrics = useLyricsStore((s) => s.showLyrics);
   const setLyrics = useLyricsStore((s) => s.setCurrent);
@@ -33,6 +35,19 @@ function App(): JSX.Element {
       setLyrics(track.id);
     },
   });
+
+  function renderLayout(): JSX.Element {
+    switch (layout) {
+      case Layout.SMALL:
+        return <Small />;
+      case Layout.MEDIUM:
+        return <Medium />;
+      case Layout.LARGE:
+        return <Large />;
+      default:
+        return <></>;
+    }
+  }
 
   // @TODO: abstract this and the interval into a hook?
   async function update(): Promise<void> {
@@ -90,12 +105,13 @@ function App(): JSX.Element {
     });
   }, []);
 
-  if (!token)
+  if (!token) {
     return (
       <div className="flex w-full h-full items-center justify-center bg-zinc-950 text-white titlebar">
         <Loader2Icon className="animate-spin mr-2" /> Authorising spotify...
       </div>
     );
+  }
 
   return (
     <div className="h-full w-full bg-zinc-950 relative transition-all">
@@ -106,31 +122,9 @@ function App(): JSX.Element {
         className="h-full w-full object-cover absolute top-0 blur-xl pointer-events-none z-0"
       />
 
-      {/* main app */}
-      <div className="titlebar flex h-full justify-center relative tall:pb-24">
-        {/* album cover and lyrics */}
-        <PlaybackMedia />
+      <Header />
 
-        {/* background gradient */}
-        <div className="bg-gradient-to-t from-zinc-950/50 to-zinc-900/10 h-full w-full absolute bottom-0 left-0" />
-
-        {/* playback bar wrapper */}
-        <div className="titlebar w-full flex flex-col justify-around items-center tall:absolute bottom-0 p-4 pt-0 tall:h-32 h-full">
-          {/* backgroudn gradient */}
-          <div className="bg-gradient-to-t from-zinc-950 to-transparent h-full w-full absolute bottom-0 left-0" />
-          <Marquee>
-            <p className="titlebar w-full text-center text-white pb-4">{nowPlaying}</p>
-          </Marquee>
-
-          <PlaybackBar />
-        </div>
-      </div>
-
-      {/* exit button top right */}
-      <button className="absolute right-0 top-0 z-30 w-10 h-10 opacity-100" onClick={window.api.kill}>
-        <div className="h-24 w-24 bg-[radial-gradient(at_right_top,_black,#00000000,#00000000)] absolute -top-1 -right-1 pointer-events-none" />
-        <XCircleIcon className="titlebar-button text-zinc-200/70 hover:text-zinc-200 transition-colors w-6 cursor-pointer z-10 absolute top-2 right-2" />
-      </button>
+      {renderLayout()}
     </div>
   );
 }

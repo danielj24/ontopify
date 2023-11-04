@@ -6,9 +6,8 @@ import AuthWindow, { handleAuthCode } from "@/main/window/auth";
 import { getToken, deleteTokens, refreshToken } from "@/util/token";
 import getMainWindow from "@/util/getMainWindow";
 import { fetchLyrics } from "@/api/lyrics";
-
-// create into enum/token.ts instead
-import { TokenType } from "@/type/token";
+import { Layout, LayoutHeight, LayoutWidth } from "@/enum/layout";
+import { TokenType } from "@/enum/token";
 
 import { SPOTIFY_REDIRECT_URI } from "~/env";
 
@@ -53,7 +52,38 @@ app.whenReady().then(() => {
     app.quit();
   });
 
-  ipcMain.handle("resize", async (event, size: "sm" | "md" | "lg") => {
+  const easeInOutCubic = (t: number): number => {
+    return t < 0.5
+      ? 4 * t * t * t // ease in
+      : 1 - Math.pow(-2 * t + 2, 3) / 2; // ease out
+  };
+
+  function lerp(start: number, end: number, time: number) {
+    return start + (end - start) * easeInOutCubic(time);
+  }
+
+  function animateResize(window: BrowserWindow, targetWidth: number, targetHeight: number, duration: number) {
+    const startTime = Date.now();
+    const [startWidth, startHeight] = window.getSize();
+
+    const step = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const t = Math.min(elapsed / duration, 1);
+
+      const currentWidth = Math.round(lerp(startWidth, targetWidth, t));
+      const currentHeight = Math.round(lerp(startHeight, targetHeight, t));
+      window.setSize(currentWidth, currentHeight);
+
+      if (t < 1) {
+        setImmediate(step);
+      }
+    };
+
+    setImmediate(step);
+  }
+
+  ipcMain.handle("resize", async (event, size: Layout) => {
     const main = getMainWindow();
 
     if (!main) {
@@ -61,14 +91,14 @@ app.whenReady().then(() => {
     }
 
     switch (size) {
-      case "sm":
-        main.setSize(300, 150);
+      case Layout.SMALL:
+        animateResize(main, LayoutWidth.SMALL, LayoutHeight.SMALL, 400);
         break;
-      case "md":
-        main.setSize(300, 300);
+      case Layout.MEDIUM:
+        animateResize(main, LayoutWidth.MEDIUM, LayoutHeight.MEDIUM, 400);
         break;
-      case "lg":
-        main.setSize(300, 430);
+      case Layout.LARGE:
+        animateResize(main, LayoutWidth.LARGE, LayoutHeight.LARGE, 400);
         break;
     }
   });

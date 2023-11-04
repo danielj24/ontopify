@@ -1,5 +1,6 @@
 import { safeStorage } from "electron";
-import { TokenType } from "@/type/token";
+import { TokenType } from "@/enum/token";
+
 import { SPOTIFY_CLIENT_ID } from "~/env";
 
 const store = {} as Record<TokenType, Buffer>;

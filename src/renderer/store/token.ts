@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Tokens } from "@/type/token";
+import { Tokens } from "@/enum/token";
 
 interface TokenStore {
   [Tokens.SPOTIFY]: string;

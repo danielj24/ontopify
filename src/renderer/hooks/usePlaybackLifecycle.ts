@@ -1,5 +1,3 @@
-// usePlaybackLifecycle.ts
-
 import { useEffect, useState } from "react";
 import { usePlaybackStore } from "@/renderer/store/playback";
 
@@ -11,7 +9,8 @@ interface PlaybackLifecycle {
   onTrackChange?: (track: Item) => void;
 }
 
-export function usePlaybackLifecycle({ onPlay, onPause, onTrackChange }: PlaybackLifecycle) {
+export function usePlaybackLifecycle(props: PlaybackLifecycle) {
+  const { onPlay, onPause, onTrackChange } = props;
   const playbackState = usePlaybackStore((state) => state.playbackState);
 
   const [previousPlaybackState, setPreviousPlaybackState] = useState(playbackState);

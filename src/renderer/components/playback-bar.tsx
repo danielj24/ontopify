@@ -71,7 +71,7 @@ function PlaybackBar() {
 
       {/* Playback controls */}
       <div className="flex w-full items-center justify-around">
-        <MenuIcon className="titlebar-button stroke-zinc-500 h-7 w-7 cursor-not-allowed" />
+        <MenuIcon className="titlebar-button stroke-zinc-500 h-7 w-7 p-3 cursor-not-allowed box-content" />
         <SkipBackIcon
           className="titlebar-button stroke-zinc-200 fill-transparent h-7 w-7 cursor-pointer transition-colors bg-transparent hover:bg-zinc-200/10 rounded-full p-3 box-content"
           onClick={handlePrevious}

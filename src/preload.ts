@@ -11,6 +11,7 @@ interface Api {
   unauth: () => Promise<void>;
   reauth: () => Promise<void>;
   kill: () => Promise<void>;
+  resize: (size: "sm" | "md" | "lg") => Promise<void>;
 
   getWebPlayerToken: () => Promise<void>;
 
@@ -39,6 +40,8 @@ const api: Api = {
   reauth: async () => await ipcRenderer.invoke("reauth"),
   // kill the app
   kill: async () => await ipcRenderer.invoke("kill"),
+  // resize the app
+  resize: async (size: "sm" | "md" | "lg") => await ipcRenderer.invoke("resize", size),
 
   // get web player token from spotify
   getWebPlayerToken: async () => await ipcRenderer.invoke("wp-token"),

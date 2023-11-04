@@ -1,6 +1,6 @@
 import { fetchProfile } from "@/api/user";
 import { getToken } from "@/util/token";
-import { TokenType } from "@/type/token";
+import { TokenType } from "@/enum/token";
 
 export default async function checkAuth(): Promise<boolean> {
   const spotifyKey = getToken(TokenType.ACCESS);

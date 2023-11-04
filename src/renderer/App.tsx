@@ -5,19 +5,19 @@ import PlaybackBar from "@renderer/components/playback-bar";
 import Marquee from "@/renderer/components/ui/marquee";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
+import { useLyricsStore } from "@/renderer/store/lyrics";
+import { usePlaybackLifecycle } from "@/renderer/hooks/usePlaybackLifecycle";
+import PlaybackMedia from "@/renderer/components/playback-media";
 import { fetchPlaybackState } from "@/api/playback";
 
 import type { Item, PlaybackErrorResponse, SpotifyPlaybackState } from "@/type/playback";
 import type { TokenErrorResponse } from "@/type/token";
-import PlaybackMedia from "./components/playback-media";
-import { usePlaybackLifecycle } from "./hooks/usePlaybackLifecycle";
-import { useLyricsStore } from "./store/lyrics";
 
 function App(): JSX.Element {
   const token = useTokenStore((s) => s.spotify);
   const setSpotifyToken = useTokenStore((s) => s.setSpotifyToken);
 
-  const setPlaybackState = usePlaybackStore((s) => s.setPlaybackState);
+  const setPlaybackState = usePlaybackStore((s) => s._setPlaybackState);
   const albumImg = usePlaybackStore((s) => s.playbackState?.item?.album?.images?.[0]?.url);
   const nowPlaying = usePlaybackStore((s) =>
     s.playbackState?.item != null ? `${s.playbackState?.item.name} - ${s.playbackState?.item.artists[0].name}` : "",
@@ -28,7 +28,7 @@ function App(): JSX.Element {
 
   usePlaybackLifecycle({
     onTrackChange: (track: Item) => {
-      if (!showLyrics) return;
+      if (!showLyrics || !track) return;
 
       setLyrics(track.id);
     },

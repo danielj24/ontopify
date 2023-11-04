@@ -1,5 +1,5 @@
 import { BrowserWindow } from "electron";
-import { MAIN_WINDOW_TITLE } from "../consts/window";
+import { MAIN_WINDOW_TITLE } from "@/consts/window";
 
 export default function getMainWindow() {
   const windows = BrowserWindow.getAllWindows();

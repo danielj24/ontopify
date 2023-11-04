@@ -1,19 +1,24 @@
 import { create } from "zustand";
+import { useTokenStore } from "@/renderer/store/token";
+import { seek } from "@/api/playback";
 
 import type { SpotifyPlaybackState } from "@/type/playback";
 
 interface PlaybackStore {
   playbackState: SpotifyPlaybackState | null;
-  setPlaybackState: (state: SpotifyPlaybackState) => void;
-  setIsPlaying: (isPlaying: boolean) => void;
+
+  _setPlaybackState: (state: SpotifyPlaybackState) => void;
+  _setIsPlaying: (isPlaying: boolean) => void;
+
+  seek: (positionMs: number) => Promise<void>;
 }
 
 export const usePlaybackStore = create<PlaybackStore>((set, get) => ({
   playbackState: null,
 
-  setPlaybackState: (state: SpotifyPlaybackState) => set({ playbackState: state }),
+  _setPlaybackState: (state: SpotifyPlaybackState) => set({ playbackState: state }),
 
-  setIsPlaying: (isPlaying: boolean) => {
+  _setIsPlaying: (isPlaying: boolean) => {
     const state = get().playbackState;
 
     if (state === null) return;
@@ -24,5 +29,15 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => ({
         is_playing: isPlaying,
       },
     });
+  },
+
+  seek: async (positionMs: number) => {
+    const token = useTokenStore.getState().spotify;
+
+    try {
+      await seek(token, positionMs);
+    } catch (error) {
+      console.log(error);
+    }
   },
 }));

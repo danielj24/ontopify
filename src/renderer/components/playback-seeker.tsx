@@ -1,13 +1,10 @@
 import React, { useRef, useState } from "react";
 import { usePlaybackStore } from "@/renderer/store/playback";
-import { useTokenStore } from "@/renderer/store/token";
 import { Slider } from "@/renderer/components/ui/slider";
-import { seek } from "@/api/playback";
 
 export default function PlaybackSeeker() {
-  const token = useTokenStore((s) => s.spotify);
   const playbackState = usePlaybackStore((s) => s.playbackState);
-  const setPlaybackState = usePlaybackStore((s) => s.setPlaybackState);
+  const seek = usePlaybackStore((s) => s.seek);
 
   const [mouseDown, setMouseDown] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -23,12 +20,7 @@ export default function PlaybackSeeker() {
 
     const newProgress = ~~((value / 100) * playbackState.item.duration_ms);
 
-    try {
-      await seek(token, newProgress);
-      setPlaybackState({ ...playbackState, progress_ms: newProgress });
-    } catch (error) {
-      console.log(error);
-    }
+    seek(newProgress);
   }
 
   function getSelectionByPercent(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {

@@ -14,7 +14,7 @@ export default function PlaybackMedia() {
       <div className="relative">
         <img src={albumImg} alt="" className="w-full z-0 object-cover rounded-lg" />
         {showLyrics && (
-          <div className="absolute left-0 top-0 w-full aspect-square z-10 rounded-lg bg-zinc-950/80 p-3">
+          <div className="absolute left-0 top-0 w-full aspect-square z-10 rounded-lg bg-zinc-950/80 px-3">
             <LyricRenderer lyrics={lyrics?.lyrics} currentTimeMs={playbackState?.progress_ms || 0} />
           </div>
         )}

@@ -1,13 +1,16 @@
 import { app, BrowserWindow, ipcMain, protocol, session } from "electron";
 import path from "path";
-import { getToken, deleteTokens, refreshToken } from "@/util/token";
-import { TokenType } from "./type/token";
 import AppWindow from "@/main/window/app";
-import AuthWindow, { handleAuthCode } from "@/main/window/auth";
 import WebPlayerTokenWindow from "@/main/window/wp-token";
+import AuthWindow, { handleAuthCode } from "@/main/window/auth";
+import { getToken, deleteTokens, refreshToken } from "@/util/token";
+import getMainWindow from "@/util/getMainWindow";
+import { fetchLyrics } from "@/api/lyrics";
+
+// create into enum/token.ts instead
+import { TokenType } from "@/type/token";
+
 import { SPOTIFY_REDIRECT_URI } from "~/env";
-import getMainWindow from "./util/getMainWindow";
-import { fetchLyrics } from "./api/lyrics";
 
 if (require("electron-squirrel-startup")) {
   app.quit();

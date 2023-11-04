@@ -12,10 +12,9 @@ function PlaybackBar() {
 
   const currentTrackID = usePlaybackStore((s) => s.playbackState?.item?.id);
   const playbackState = usePlaybackStore((s) => s.playbackState);
-  const setIsPlaying = usePlaybackStore((s) => s.setIsPlaying);
+  const setIsPlaying = usePlaybackStore((s) => s._setIsPlaying);
 
   const setLyrics = useLyricsStore((s) => s.setCurrent);
-  const lyrics = useLyricsStore((s) => s.current);
   const setShowLyrics = useLyricsStore((s) => s.setShowLyrics);
   const showLyrics = useLyricsStore((s) => s.showLyrics);
 

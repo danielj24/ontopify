@@ -8,7 +8,7 @@ Add `ontopify://callback` as a Redirect URI and add your applications Client ID 
 
 Make sure you copy the contents of `env.example.ts` to a new `env.ts`.
 
-If you want other accounts to use the application then be sure to add users in the User Management tab on the Spotify developer dashboard (or submit a quota extension request).
+If you want other accounts to use the application then be sure to add users in the User Management tab on the Spotify developer dashboard.
 
 Use the command `npm run start` to start the development server.
 

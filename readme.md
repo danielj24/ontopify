@@ -1,7 +1,5 @@
 # ontopify
-![3f185ba0c24d07c68b111c7e4cbe05eb](https://github.com/danielj247/ontopify/assets/92366070/caa7c416-4b6e-45dc-aafd-577d92d377d3)
-
-
+https://github.com/danielj247/ontopify/assets/92366070/cb2650ea-2507-4748-893e-0122ad17877f
 
 ## Development
 When developing/building yourself you will first need to [create an app on the Spotify developer dashboard](https://developer.spotify.com/dashboard/create).

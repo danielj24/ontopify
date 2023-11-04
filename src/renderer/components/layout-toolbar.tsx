@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { EyeIcon, ChevronRight, PanelBottom, RectangleHorizontal, Square } from "lucide-react";
 import { cn } from "@/util/global";
+import useLayout from "@/renderer/hooks/useLayout";
+import { Layout } from "~/src/enum/layout";
 
 interface LayoutToolbarProps {
   openBy?: number;
@@ -9,6 +11,7 @@ interface LayoutToolbarProps {
 export default function LayoutToolbar(props: LayoutToolbarProps) {
   const { openBy } = props;
 
+  const layout = useLayout();
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,15 +22,24 @@ export default function LayoutToolbar(props: LayoutToolbarProps) {
       >
         <div className="inline-flex items-center gap-x-3 h-full absolute right-full mr-5">
           <PanelBottom
-            className="titlebar-button cursor-pointer text-zinc-50/70 hover:text-zinc-50"
+            className={cn(
+              "titlebar-button cursor-pointer text-zinc-50/70 hover:text-zinc-50",
+              layout === Layout.LARGE && "text-zinc-50",
+            )}
             onClick={() => window.api.resize("lg")}
           />
           <Square
-            className="titlebar-button cursor-pointer text-zinc-50/70 hover:text-zinc-50"
+            className={cn(
+              "titlebar-button cursor-pointer text-zinc-50/70 hover:text-zinc-50",
+              layout === Layout.MEDIUM && "text-zinc-50",
+            )}
             onClick={() => window.api.resize("md")}
           />
           <RectangleHorizontal
-            className="titlebar-button cursor-pointer text-zinc-50/70 hover:text-zinc-50"
+            className={cn(
+              "titlebar-button cursor-pointer text-zinc-50/70 hover:text-zinc-50",
+              layout === Layout.SMALL && "text-zinc-50",
+            )}
             onClick={() => window.api.resize("sm")}
           />
         </div>

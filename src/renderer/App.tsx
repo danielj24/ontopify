@@ -118,7 +118,6 @@ function App(): JSX.Element {
         <div className="titlebar w-full flex flex-col justify-around items-center tall:absolute bottom-0 p-4 pt-0 tall:h-32 h-full">
           {/* backgroudn gradient */}
           <div className="bg-gradient-to-t from-zinc-950 to-transparent h-full w-full absolute bottom-0 left-0" />
-          {/* @TODO: improve marquee, use js to calculate width of text and animate it */}
           <Marquee>
             <p className="titlebar w-full text-center text-white pb-4">{nowPlaying}</p>
           </Marquee>

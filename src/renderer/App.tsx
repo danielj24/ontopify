@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useInterval } from "usehooks-ts";
 import { Loader2Icon, XCircleIcon } from "lucide-react";
 import PlaybackBar from "@renderer/components/playback-bar";
-import { Marquee } from "@/renderer/components/ui/marquee";
+import Marquee from "@/renderer/components/ui/marquee";
 import { useTokenStore } from "@renderer/store/token";
 import { usePlaybackStore } from "@renderer/store/playback";
 import { fetchPlaybackState } from "@/api/playback";
@@ -120,9 +120,7 @@ function App(): JSX.Element {
           <div className="bg-gradient-to-t from-zinc-950 to-transparent h-full w-full absolute bottom-0 left-0" />
           {/* @TODO: improve marquee, use js to calculate width of text and animate it */}
           <Marquee>
-            <p className="titlebar w-full text-center text-white z-10 h-10 truncate px-4 pb-2 tall:pb-0 mt-4 tall:mt-0">
-              {nowPlaying}
-            </p>
+            <p className="titlebar w-full text-center text-white pb-4">{nowPlaying}</p>
           </Marquee>
 
           <PlaybackBar />

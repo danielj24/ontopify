@@ -1,6 +1,10 @@
 import { BrowserWindow, shell } from "electron";
 import { join } from "path";
 
+// sm -> 300 x 150
+// md -> 300 x 300
+// lg -> 300 x 430
+
 export default function AppWindow() {
   const mainWindow = new BrowserWindow({
     width: 300,
